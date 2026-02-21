@@ -19,16 +19,15 @@ export default {
                 '9xl': ['6rem', { lineHeight: '1', letterSpacing: '-0.01em', fontWeight: 'bold' }],
             },
             fontFamily: {
-                heading: ['Inter', 'sans-serif'],
-                paragraph: ['Merriweather', 'serif'],
+                heading: "Open Sans",
+                paragraph: "Open Sans"
             },
             colors: {
-                primary: '#0f0fff',
-                'primary-foreground': '#53d409',
-                secondary: '#add8e6',
-                'secondary-foreground': '#f8fafc',
-                foreground: '#000000',
-                background: '#ffffff',
+                primary: '#167BF6',
+                accent: '#4747D7',
+                background: '#F5F5F7',
+                foreground: '#4747D7',
+                link: '#4747D7'
             },
         },
     },

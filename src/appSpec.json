@@ -1,0 +1,240 @@
+{
+  "id": "7ef8dfa7-da08-47b7-9db4-7f9190ac78ad",
+  "initialPrompt": "Create a website inspired by https://www.kjcleanercar.com/",
+  "siteName": "kjcleanercar.com",
+  "brandBook": {
+    "tones": [
+      "moody",
+      "sophisticated",
+      "artistic",
+      "elegant",
+      "modern",
+      "bold",
+      "feminine",
+      "minimal",
+      "emotional",
+      "confident"
+    ],
+    "designStyle": {
+      "primaryStyle": [
+        "Modern",
+        "Minimalism",
+        "Artistic"
+      ],
+      "supportingStyles": [
+        "Editorial",
+        "Romantic",
+        "High-Contrast"
+      ]
+    },
+    "toneOfVoice": "Sophisticated, artistic, moody, and elegant with a modern edge. The brand voice conveys emotional depth and creative confidence, blending boldness with femininity.",
+    "graphicElements": {
+      "icons": "Icons are minimal line-style graphics using the 'linkText' color, maintaining a clean and modern look consistent with the overall design.",
+      "stickers": "No stickers or badges are present, preserving the minimal and elegant aesthetic.",
+      "illustrations": "No illustrations are used; the design relies on photographic content with artistic lighting and color grading."
+    },
+    "designSummary": "This design features a dark, rich burgundy background paired with a soft periwinkle blue accent color, creating a high-contrast and visually striking aesthetic. The typography combines large, bold uppercase sans-serif fonts for headings with delicate, flowing script fonts for the artist's name and call-to-action buttons, balancing strength and elegance. The layout is centered and symmetrical, emphasizing a strong visual hierarchy with generous negative space that enhances readability and focus. Imagery is artistic and moody, using soft lighting and pink-purple hues, framed centrally to draw attention. UI components like buttons and links use outlined styles in the accent color, reinforcing the sophisticated and modern feel. Overall, the design is minimal yet layered, suitable for creative professionals seeking to express a refined, emotional, and contemporary brand identity.",
+    "layout": {
+      "grid": {
+        "margins": "Generous page margins",
+        "padding": "Consistent padding within containers",
+        "compositionApproach": "Centered, symmetrical column-based layout",
+        "spacing": {
+          "gaps": "Consistent medium gaps",
+          "rows": "Defined content rows",
+          "columns": "12-column grid",
+          "compositionApproach": "Not specified"
+        }
+      },
+      "layoutDna": {
+        "contrastSpectrum": "High-Contrast",
+        "densitySpectrum": "Balanced",
+        "textVsImageEmphasis": "Balanced",
+        "complexitySpectrum": "Simple & Clean",
+        "gridAlignmentSpectrum": "Strict Grid",
+        "negativeSpaceUsage": "Generous"
+      }
+    },
+    "components": {
+      "images": "Images are centrally framed, artistic, and moody with soft lighting and pink-purple hues. They are used as focal points with generous negative space around them to avoid clutter.",
+      "buttons": "Buttons are outlined with the 'buttonBorder' color and use the elegant script font for text. They have a minimalistic style with subtle hover effects that invert the background and text colors to maintain brand consistency.",
+      "containers": "Content containers use a light 'cardBackground' color with subtle borders or shadows to separate them from the dark 'primary' background. Containers maintain generous padding and margin to enhance readability and focus."
+    },
+    "palette": {
+      "colors": {
+        "customColors": [
+          {
+            "name": "buttonborder",
+            "value": "#3B121B"
+          },
+          {
+            "name": "linktext",
+            "value": "#8A9FEF"
+          },
+          {
+            "name": "cardbackground",
+            "value": "#F5F5F7"
+          },
+          {
+            "name": "foreground",
+            "value": "#F5F5F7"
+          },
+          {
+            "name": "destructive",
+            "value": "#DF3131"
+          },
+          {
+            "name": "destructiveforeground",
+            "value": "#ffffff"
+          }
+        ],
+        "background": "#3B121B",
+        "secondary": "#F5F5F7",
+        "secondaryForeground": "#3B121B",
+        "primaryForeground": "#8A9FEF",
+        "primary": "#3B121B"
+      },
+      "paletteUsageGuide": "Use the 'primary' color as the dominant background to create a moody and immersive atmosphere. The 'primaryForeground' color should be used for all key text elements, including headings, navigation links, and interactive elements, to ensure strong contrast and readability. The 'secondary' color serves as a background for cards and content containers, providing a light, neutral contrast against the dark 'primary' background. Text on 'secondary' backgrounds should use the 'secondaryForeground' color to maintain legibility. The 'buttonBorder' color is used for outlining buttons and interactive borders, paired with script typography to emphasize elegance. The 'linkText' color highlights clickable text links in navigation and footer areas. The 'cardBackground' color is reserved for content blocks to separate them visually from the main background. This palette balances high contrast with softness, ensuring accessibility while maintaining the brand's sophisticated and artistic tone.",
+      "paletteAccessibilityNotes": "The combination of 'primaryForeground' on 'primary' background meets WCAG AA standards for large text and AAA for UI components, ensuring readability. The 'secondaryForeground' on 'secondary' background also meets WCAG AA contrast ratios for body text. Buttons outlined with 'buttonBorder' on 'primary' background maintain sufficient contrast for interactive elements. Overall, the palette supports accessibility while preserving the brand's moody and elegant aesthetic."
+    },
+    "typography": {
+      "headings": {
+        "font": {
+          "fontFamily": "pinyon-script",
+          "role": "Primary Heading Font",
+          "fontJustification": ""
+        },
+        "headingsAccessibilityNotes": "Headings in 'primaryForeground' on 'primary' background meet WCAG AAA contrast standards, ensuring excellent readability even at large sizes.",
+        "headingsSimilarFonts": [
+          "roboto-bold",
+          "montserrat-black-new",
+          "anton"
+        ],
+        "headingsUsageGuide": "Use the heading font in large sizes for main titles and section headers to create a strong visual impact. The uppercase style enhances presence and readability against the dark background. Pair headings with script fonts for contrast and to soften the overall tone. Maintain generous spacing around headings to preserve clarity and focus. Use 'primaryForeground' on 'primary' background or 'secondaryForeground' on 'secondary' backgrounds to maintain legibility."
+      },
+      "paragraphs": {
+        "font": {
+          "fontFamily": "madefor-display",
+          "role": "Secondary Text Font",
+          "fontJustification": ""
+        },
+        "paragraphsUsageGuide": "Use the paragraph font for body text, navigation links, and smaller informational text. Text should be uppercase or sentence case depending on context, with sufficient line height for readability. Combine with headings by contrasting weight and size to create hierarchy. Use 'primaryForeground' on 'primary' background or 'secondaryForeground' on 'secondary' backgrounds to maintain legibility. Avoid overly small sizes to preserve accessibility.",
+        "paragraphsSimilarFonts": [
+          "roboto",
+          "lato-light",
+          "nunito sans"
+        ],
+        "paragraphsAccessibilityNotes": "Paragraph text colors meet WCAG AA contrast ratios on their respective backgrounds, supporting accessibility for most users."
+      },
+      "customFontFamilies": {},
+      "fontSizes": [
+        {
+          "name": "xs",
+          "size": "0.75rem",
+          "lineHeight": "1.2",
+          "letterSpacing": "0.05em",
+          "fontWeight": "400"
+        },
+        {
+          "name": "sm",
+          "size": "0.875rem",
+          "lineHeight": "1.3",
+          "letterSpacing": "0.04em",
+          "fontWeight": "400"
+        },
+        {
+          "name": "base",
+          "size": "1rem",
+          "lineHeight": "1.5",
+          "letterSpacing": "0.03em",
+          "fontWeight": "400"
+        },
+        {
+          "name": "lg",
+          "size": "1.125rem",
+          "lineHeight": "1.5",
+          "letterSpacing": "0.02em",
+          "fontWeight": "600"
+        },
+        {
+          "name": "xl",
+          "size": "1.25rem",
+          "lineHeight": "1.5",
+          "letterSpacing": "0.01em",
+          "fontWeight": "600"
+        },
+        {
+          "name": "2xl",
+          "size": "1.5rem",
+          "lineHeight": "1.4",
+          "letterSpacing": "0em",
+          "fontWeight": "700"
+        },
+        {
+          "name": "3xl",
+          "size": "1.875rem",
+          "lineHeight": "1.3",
+          "letterSpacing": "-0.01em",
+          "fontWeight": "700"
+        },
+        {
+          "name": "4xl",
+          "size": "2.25rem",
+          "lineHeight": "1.2",
+          "letterSpacing": "-0.02em",
+          "fontWeight": "800"
+        },
+        {
+          "name": "5xl",
+          "size": "3rem",
+          "lineHeight": "1.1",
+          "letterSpacing": "-0.03em",
+          "fontWeight": "800"
+        },
+        {
+          "name": "6xl",
+          "size": "3.75rem",
+          "lineHeight": "1.1",
+          "letterSpacing": "-0.04em",
+          "fontWeight": "900"
+        },
+        {
+          "name": "7xl",
+          "size": "4.5rem",
+          "lineHeight": "1",
+          "letterSpacing": "-0.05em",
+          "fontWeight": "900"
+        },
+        {
+          "name": "8xl",
+          "size": "6rem",
+          "lineHeight": "1",
+          "letterSpacing": "-0.06em",
+          "fontWeight": "900"
+        },
+        {
+          "name": "9xl",
+          "size": "8rem",
+          "lineHeight": "1",
+          "letterSpacing": "-0.07em",
+          "fontWeight": "900"
+        }
+      ],
+      "welcomeSectionTypography": {
+        "placement": "Centered",
+        "implementation": "The welcome section uses a centered typographic placement with the artist's name in large, elegant script font overlaying the central hero image. This placement draws immediate focus to the brand name, balanced symmetrically with smaller images on either side. The large uppercase heading is placed above the image, creating a strong visual hierarchy. The call-to-action button is centered below the image, using the same script font with an outlined border in the accent color, reinforcing the elegant and artistic tone. This centered approach creates a harmonious and immersive introduction to the brand."
+      }
+    },
+    "originImagesUrls": [
+      "https://wixmp-fe53c9ff592a4da924211f23.wixmp.com/uploads/1769035190043-Frame%202147238836.png"
+    ]
+  },
+  "attachments": {
+    "contentImagesUrls": [],
+    "inspirationImagesUrls": [
+      "https://wixmp-c562ea68f10846b458285ce5.wixmp.com/scraped-screenshots/screenshot-1771634776694.webp"
+    ]
+  },
+  "status": "READY",
+  "plan": "\n\n```json\n{\n  \"sections\": [\n    {\n      \"id\": \"overview\",\n      \"title\": \"## Overview\",\n      \"content\": \"This site showcases Platinum Touch Detailing's mobile auto detailing services in Dallas, TX, featuring service packages, booking information, and customer testimonials.\"\n    },\n    {\n      \"id\": \"key-features\",\n      \"title\": \"## Key features\",\n      \"content\": \"- **View Service Listing**: Browse all available detailing packages and services.\\n- **View Service Details**: See detailed information about each service package including pricing and what's included.\\n- **View Testimonials**: Read customer reviews and feedback.\\n- **View Contact Information**: Access business phone number and contact details.\\n- **View About Information**: Learn about the company's mission, values, and service approach.\",\n      \"metadata\": [\n        { \"id\": \"view-service-listing\", \"name\": \"View Service Listing\" },\n        { \"id\": \"view-service-details\", \"name\": \"View Service Details\" },\n        { \"id\": \"view-testimonials\", \"name\": \"View Testimonials\" },\n        { \"id\": \"view-contact-information\", \"name\": \"View Contact Information\" },\n        { \"id\": \"view-about-information\", \"name\": \"View About Information\" }\n      ]\n    },\n    {\n      \"id\": \"structure\",\n      \"title\": \"## Structure\",\n      \"content\": \"- **Header (Reusable)**: Contains business name, navigation menu, and phone number (2143670617).\\n- **Home Page**: Features hero section with main call-to-action, service overview, and customer testimonials.\\n- **Services Page**: Displays all detailing packages with filtering options and detailed service information.\\n- **About Page**: Presents company information, mission statement, and service philosophy.\\n- **Contact Page**: Shows contact information including phone number (2143670617) and business details.\\n- **Footer (Reusable)**: Contains business information, quick links, and contact details.\"\n    }\n  ],\n  \"apps\": [\n    {\n      \"id\": \"wix-cms\",\n      \"keyFeatures\": [\n        { \"id\": \"view-service-listing\", \"name\": \"View Service Listing\" },\n        { \"id\": \"view-service-details\", \"name\": \"View Service Details\" },\n        { \"id\": \"view-testimonials\", \"name\": \"View Testimonials\" },\n        { \"id\": \"view-contact-information\", \"name\": \"View Contact Information\" },\n        { \"id\": \"view-about-information\", \"name\": \"View About Information\" }\n      ]\n    }\n  ],\n  \"version\": \"4.0.1\"\n}\n```"
+}
