@@ -1,18 +1,18 @@
-// WI-HPI
+// The Detail Standard-DFW
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Phone, 
-  Star, 
-  Check, 
-  Sparkles, 
-  Clock, 
-  Shield, 
-  MapPin, 
-  Gift, 
-  ChevronRight, 
-  Car, 
-  Calendar, 
+import {
+  Phone,
+  Star,
+  Check,
+  Sparkles,
+  Clock,
+  Shield,
+  MapPin,
+  Gift,
+  ChevronRight,
+  Car,
+  Calendar,
   CreditCard,
   Menu,
   X
@@ -31,8 +31,8 @@ import type { DetailingServices, Testimonials } from '@/entities';
 // --- Animation Components ---
 
 const AnimatedElement: React.FC<{
-  children: React.ReactNode; 
-  className?: string; 
+  children: React.ReactNode;
+  className?: string;
   delay?: number;
   direction?: 'up' | 'left' | 'right' | 'fade';
 }> = ({ children, className = "", delay = 0, direction = 'up' }) => {
@@ -42,14 +42,14 @@ const AnimatedElement: React.FC<{
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         setTimeout(() => setIsVisible(true), delay);
         observer.unobserve(el);
       }
     }, { threshold: 0.1, rootMargin: '50px' });
-    
+
     observer.observe(el);
     return () => observer.disconnect();
   }, [delay]);
@@ -67,8 +67,8 @@ const AnimatedElement: React.FC<{
   };
 
   return (
-    <div 
-      ref={ref} 
+    <div
+      ref={ref}
       className={`transition-all duration-700 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'} ${getTransform()} ${className}`}
     >
       {children}
@@ -134,9 +134,9 @@ export default function HomePage() {
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
-          <Image 
-            src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg" 
-            alt="Luxury Car Detailing" 
+          <Image
+            src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg"
+            alt="Luxury Car Detailing"
             className="w-full h-full object-cover opacity-60"
             width={1920}
             height={1080}
@@ -165,23 +165,23 @@ export default function HomePage() {
 
           <AnimatedElement delay={200}>
             <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Never lose that car shine - K&J Cleaner brings you the best car detailing Dallas can offer. 
+              Never lose that car shine - K&J Cleaner brings you the best car detailing Dallas can offer.
               Every service at your doorstep.
             </p>
           </AnimatedElement>
 
           <AnimatedElement delay={300}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="h-14 px-8 text-lg bg-primary hover:bg-primary/90 text-white rounded-full shadow-[0_0_20px_rgba(22,123,246,0.4)] hover:shadow-[0_0_30px_rgba(22,123,246,0.6)] transition-all duration-300 hover:scale-105"
                 onClick={() => navigate('/services')}
               >
                 Book Now
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
+              <Button
+                size="lg"
+                variant="outline"
                 className="h-14 px-8 text-lg border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white hover:border-white/40 rounded-full backdrop-blur-sm transition-all duration-300"
                 onClick={() => window.location.href = 'tel:2143670617'}
               >
@@ -214,7 +214,7 @@ export default function HomePage() {
                 <p className="text-white/80 text-sm">Book as often as you need</p>
               </div>
             </AnimatedElement>
-            
+
             <AnimatedElement delay={100} direction="up" className="flex items-center justify-center md:justify-start gap-4">
               <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm">
                 <Shield className="w-8 h-8" />
@@ -263,7 +263,7 @@ export default function HomePage() {
                       onClick={() => setActiveTab(tab.id)}
                       className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                         activeTab === tab.id
-                          ? 'bg-white text-primary shadow-md' 
+                          ? 'bg-white text-primary shadow-md'
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
@@ -297,12 +297,12 @@ export default function HomePage() {
                         <span className="ml-2 text-muted-foreground text-sm">starting at</span>
                       </div>
                     </CardHeader>
-                    
+
                     <CardContent className="flex-grow">
                       <p className="text-muted-foreground mb-6 text-sm line-clamp-2">
                         {service.itemDescription}
                       </p>
-                      
+
                       <div className="space-y-3">
                         {getFeaturesList(service.whatsIncluded).slice(0, 6).map((feature, i) => (
                           <div key={i} className="flex items-start gap-3">
@@ -316,7 +316,7 @@ export default function HomePage() {
                     </CardContent>
 
                     <CardFooter className="pt-4 pb-8">
-                      <Button 
+                      <Button
                         className="w-full bg-foreground text-white hover:bg-foreground/90 h-12 rounded-xl text-base font-semibold shadow-lg shadow-foreground/20"
                         onClick={() => navigate('/services')}
                       >
@@ -381,23 +381,23 @@ export default function HomePage() {
           {/* Left: Image/Content */}
           <div className="relative p-12 flex flex-col justify-center items-start z-10">
             <div className="absolute inset-0 z-0">
-              <Image 
-                src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg" 
-                alt="Garage" 
+              <Image
+                src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg"
+                alt="Garage"
                 className="w-full h-full object-cover opacity-40"
                 width={800}
                 height={800}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
             </div>
-            
+
             <div className="relative z-10 max-w-lg">
               <Badge className="mb-6 bg-primary text-white border-none px-4 py-1">Service Area</Badge>
               <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
                 We are serving all of Dallas
               </h2>
               <p className="text-gray-300 text-lg mb-8 leading-relaxed">
-                From Downtown to the suburbs, our mobile units are ready to deploy. 
+                From Downtown to the suburbs, our mobile units are ready to deploy.
                 We cover a 50-mile radius around the Dallas metropolitan area.
               </p>
               <div className="flex flex-col gap-4">
@@ -428,9 +428,9 @@ export default function HomePage() {
 
           {/* Right: Map Image */}
           <div className="relative h-[400px] lg:h-auto bg-gray-900">
-            <Image 
-              src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg" 
-              alt="Map of Dallas" 
+            <Image
+              src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg"
+              alt="Map of Dallas"
               className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
               width={800}
               height={800}
@@ -459,7 +459,7 @@ export default function HomePage() {
                 <p className="text-muted-foreground mb-8">
                   The perfect gift for car lovers. Purchase a digital gift card instantly and send it to friends or family.
                 </p>
-                <Button 
+                <Button
                   className="w-fit bg-foreground text-white hover:bg-foreground/90 rounded-full px-8 h-12 shadow-lg"
                   onClick={() => navigate('/services')}
                 >
@@ -504,9 +504,9 @@ export default function HomePage() {
                   <Card className="h-full p-8 bg-secondary/10 border-none rounded-2xl hover:bg-secondary/20 transition-colors duration-300">
                     <div className="flex gap-1 mb-6">
                       {[...Array(5)].map((_, i) => (
-                        <Star 
-                          key={i} 
-                          className={`w-5 h-5 ${i < (testimonial.rating || 5) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} 
+                        <Star
+                          key={i}
+                          className={`w-5 h-5 ${i < (testimonial.rating || 5) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
                         />
                       ))}
                     </div>
@@ -542,16 +542,16 @@ export default function HomePage() {
               Book your appointment today and experience the best car detailing Dallas has to offer.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-white text-primary hover:bg-gray-100 rounded-full px-10 h-14 text-lg font-bold shadow-xl"
                 onClick={() => navigate('/services')}
               >
                 Book Appointment
               </Button>
-              <Button 
-                size="lg" 
-                variant="outline" 
+              <Button
+                size="lg"
+                variant="outline"
                 className="border-white text-white hover:bg-white/10 rounded-full px-10 h-14 text-lg font-bold"
                 onClick={() => window.location.href = 'tel:2143670617'}
               >
