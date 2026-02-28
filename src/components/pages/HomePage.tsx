@@ -115,9 +115,8 @@ export default function HomePage() {
 
   // Filter services based on active tab
   const filteredServices = services.filter(service => {
-    if (activeTab === "all") return true;
-    if (activeTab === "interior") return service.itemName?.toLowerCase().includes("interior");
-    if (activeTab === "exterior") return service.itemName?.toLowerCase().includes("exterior");
+    if (activeTab === "sedan") return service.itemDescription?.toLowerCase().includes("sedan") || service.itemDescription?.toLowerCase().includes("coupe");
+    if (activeTab === "truck") return service.itemDescription?.toLowerCase().includes("truck") || service.itemDescription?.toLowerCase().includes("suv");
     return true;
   });
 
@@ -255,17 +254,20 @@ export default function HomePage() {
             <AnimatedElement delay={100}>
               <div className="mt-8 flex justify-center">
                 <div className="bg-secondary/50 p-1 rounded-full inline-flex">
-                  {['all', 'interior', 'exterior'].map((tab) => (
+                  {[
+                    { id: 'sedan', label: 'Sedan/Coupe' },
+                    { id: 'truck', label: 'Truck/SUV' }
+                  ].map((tab) => (
                     <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
                       className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                        activeTab === tab 
+                        activeTab === tab.id
                           ? 'bg-white text-primary shadow-md' 
                           : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
-                      {tab.charAt(0).toUpperCase() + tab.slice(1)} Only
+                      {tab.label}
                     </button>
                   ))}
                 </div>
