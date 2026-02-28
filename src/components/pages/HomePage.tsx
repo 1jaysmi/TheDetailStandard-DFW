@@ -1,4 +1,6 @@
 // The Detail Standard-DFW
+npm install
+npm run dev
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
