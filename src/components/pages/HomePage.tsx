@@ -1,4 +1,5 @@
 // TheDetailStandard-DFW - Updated Homepage
+npm run release
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
