@@ -15,9 +15,7 @@ import {
   Calendar, 
   CreditCard,
   Menu,
-  X,
-  User,
-  Mail
+  X
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,14 +23,10 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Image } from '@/components/ui/image';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
-import { useForm } from 'react-hook-form';
-import { getServices, getStaff, createBooking } from '@/integrations/bookings';
 import type { DetailingServices, Testimonials } from '@/entities';
-import type { BookingsService, BookingsStaff } from '@/integrations/bookings';
 
 // --- Animation Components ---
 
@@ -82,18 +76,6 @@ const AnimatedElement: React.FC<{
   );
 };
 
-// --- Booking Form Interface ---
-
-interface BookingFormData {
-  customerName: string;
-  customerEmail: string;
-  customerPhone: string;
-  serviceId: string;
-  staffId: string;
-  date: string;
-  time: string;
-}
-
 // --- Main Component ---
 
 export default function HomePage() {
@@ -103,14 +85,6 @@ export default function HomePage() {
   const [isLoadingServices, setIsLoadingServices] = useState(true);
   const [isLoadingTestimonials, setIsLoadingTestimonials] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
-  const [bookingServices, setBookingServices] = useState<BookingsService[]>([]);
-  const [bookingStaff, setBookingStaff] = useState<BookingsStaff[]>([]);
-  const [isLoadingBooking, setIsLoadingBooking] = useState(false);
-  const [showBookingForm, setShowBookingForm] = useState(false);
-  const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [bookingError, setBookingError] = useState<string | null>(null);
-  const [isSubmittingBooking, setIsSubmittingBooking] = useState(false);
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<BookingFormData>();
 
   // Fetch Data
   useEffect(() => {
@@ -138,69 +112,6 @@ export default function HomePage() {
 
     loadData();
   }, []);
-
-  // Load booking data when form is shown
-  useEffect(() => {
-    if (showBookingForm && bookingServices.length === 0) {
-      loadBookingData();
-    }
-  }, [showBookingForm]);
-
-  const loadBookingData = async () => {
-    try {
-      setIsLoadingBooking(true);
-      setBookingError(null);
-      const [servicesData, staffData] = await Promise.all([
-        getServices(),
-        getStaff(),
-      ]);
-      setBookingServices(servicesData);
-      setBookingStaff(staffData);
-    } catch (error) {
-      console.error('Error loading booking data:', error);
-      setBookingError('Failed to load booking data. Please try again.');
-    } finally {
-      setIsLoadingBooking(false);
-    }
-  };
-
-  const onSubmitBooking = async (data: BookingFormData) => {
-    try {
-      setIsSubmittingBooking(true);
-      setBookingError(null);
-      
-      const startDateTime = new Date(`${data.date}T${data.time}`).toISOString();
-      const selectedService = bookingServices.find(s => s._id === data.serviceId);
-      const duration = selectedService?.duration || 60;
-      const endDateTime = new Date(new Date(startDateTime).getTime() + duration * 60000).toISOString();
-      
-      const booking = await createBooking({
-        serviceId: data.serviceId,
-        staffId: data.staffId || undefined,
-        startTime: startDateTime,
-        endTime: endDateTime,
-        customerName: data.customerName,
-        customerEmail: data.customerEmail,
-        customerPhone: data.customerPhone,
-      });
-      
-      if (booking) {
-        setBookingSuccess(true);
-        reset();
-        setTimeout(() => {
-          setBookingSuccess(false);
-          setShowBookingForm(false);
-        }, 3000);
-      } else {
-        setBookingError('Failed to create booking. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error submitting booking:', error);
-      setBookingError('An error occurred while booking. Please try again.');
-    } finally {
-      setIsSubmittingBooking(false);
-    }
-  };
 
   // Filter services based on active tab
   const filteredServices = services.filter(service => {
@@ -460,219 +371,6 @@ export default function HomePage() {
                 Secure payment after the service is completed to your satisfaction.
               </p>
             </AnimatedElement>
-          </div>
-
-          {/* Booking Form Section */}
-          <div className="mt-16 max-w-2xl mx-auto">
-            {!showBookingForm ? (
-              <div className="text-center">
-                <Button 
-                  size="lg"
-                  className="bg-primary hover:bg-primary/90 text-white rounded-full px-10 h-14 text-lg font-bold shadow-lg"
-                  onClick={() => setShowBookingForm(true)}
-                >
-                  Book Your Appointment Now
-                </Button>
-              </div>
-            ) : (
-              <AnimatedElement>
-                <Card className="bg-white border-border/40 rounded-2xl shadow-lg">
-                  <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5 border-b border-border/40 flex flex-row items-center justify-between">
-                    <CardTitle className="text-2xl font-heading text-foreground">
-                      Schedule Your Service
-                    </CardTitle>
-                    <button
-                      onClick={() => setShowBookingForm(false)}
-                      className="text-foreground/60 hover:text-foreground"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </CardHeader>
-                  <CardContent className="p-8">
-                    {bookingSuccess && (
-                      <div className="mb-8 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <p className="text-green-800 font-medium">
-                          ✓ Booking submitted successfully! We'll confirm your appointment shortly.
-                        </p>
-                      </div>
-                    )}
-
-                    {bookingError && (
-                      <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <p className="text-red-800 font-medium">
-                          ✗ {bookingError}
-                        </p>
-                      </div>
-                    )}
-
-                    {isLoadingBooking ? (
-                      <div className="flex justify-center py-10">
-                        <LoadingSpinner />
-                      </div>
-                    ) : (
-                      <form onSubmit={handleSubmit(onSubmitBooking)} className="space-y-6">
-                        {/* Personal Information */}
-                        <div>
-                          <h3 className="text-lg font-heading font-bold text-foreground mb-4 flex items-center gap-2">
-                            <User className="w-5 h-5 text-primary" />
-                            Your Information
-                          </h3>
-                          <div className="space-y-4">
-                            <div>
-                              <label className="block text-sm font-medium text-foreground mb-2">
-                                Full Name *
-                              </label>
-                              <Input
-                                {...register('customerName', { required: 'Name is required' })}
-                                placeholder="John Doe"
-                                className="border-border/40"
-                              />
-                              {errors.customerName && (
-                                <p className="text-red-500 text-sm mt-1">{errors.customerName.message}</p>
-                              )}
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-foreground mb-2">
-                                Email *
-                              </label>
-                              <Input
-                                {...register('customerEmail', { 
-                                  required: 'Email is required',
-                                  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email' }
-                                })}
-                                type="email"
-                                placeholder="john@example.com"
-                                className="border-border/40"
-                              />
-                              {errors.customerEmail && (
-                                <p className="text-red-500 text-sm mt-1">{errors.customerEmail.message}</p>
-                              )}
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-foreground mb-2">
-                                Phone *
-                              </label>
-                              <Input
-                                {...register('customerPhone', { required: 'Phone is required' })}
-                                placeholder="(214) 367-0617"
-                                className="border-border/40"
-                              />
-                              {errors.customerPhone && (
-                                <p className="text-red-500 text-sm mt-1">{errors.customerPhone.message}</p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Service Selection */}
-                        <div className="pt-6 border-t border-border/40">
-                          <h3 className="text-lg font-heading font-bold text-foreground mb-4 flex items-center gap-2">
-                            <Calendar className="w-5 h-5 text-primary" />
-                            Select Service
-                          </h3>
-                          <div>
-                            <label className="block text-sm font-medium text-foreground mb-2">
-                              Service *
-                            </label>
-                            <select
-                              {...register('serviceId', { required: 'Please select a service' })}
-                              className="w-full px-4 py-2 border border-border/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white"
-                            >
-                              <option value="">Choose a service...</option>
-                              {bookingServices.map(service => (
-                                <option key={service._id} value={service._id}>
-                                  {service.serviceName} {service.duration ? `- ${service.duration} min` : ''}
-                                </option>
-                              ))}
-                            </select>
-                            {errors.serviceId && (
-                              <p className="text-red-500 text-sm mt-1">{errors.serviceId.message}</p>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Staff Selection */}
-                        <div className="pt-6 border-t border-border/40">
-                          <h3 className="text-lg font-heading font-bold text-foreground mb-4 flex items-center gap-2">
-                            <User className="w-5 h-5 text-primary" />
-                            Preferred Specialist
-                          </h3>
-                          <div>
-                            <label className="block text-sm font-medium text-foreground mb-2">
-                              Staff Member (Optional)
-                            </label>
-                            <select
-                              {...register('staffId')}
-                              className="w-full px-4 py-2 border border-border/40 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white"
-                            >
-                              <option value="">Any available specialist</option>
-                              {bookingStaff.map(member => (
-                                <option key={member._id} value={member._id}>
-                                  {member.name}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-
-                        {/* Date & Time Selection */}
-                        <div className="pt-6 border-t border-border/40">
-                          <h3 className="text-lg font-heading font-bold text-foreground mb-4 flex items-center gap-2">
-                            <Clock className="w-5 h-5 text-primary" />
-                            Preferred Date & Time
-                          </h3>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                              <label className="block text-sm font-medium text-foreground mb-2">
-                                Date *
-                              </label>
-                              <Input
-                                {...register('date', { required: 'Date is required' })}
-                                type="date"
-                                className="border-border/40"
-                              />
-                              {errors.date && (
-                                <p className="text-red-500 text-sm mt-1">{errors.date.message}</p>
-                              )}
-                            </div>
-
-                            <div>
-                              <label className="block text-sm font-medium text-foreground mb-2">
-                                Time *
-                              </label>
-                              <Input
-                                {...register('time', { required: 'Time is required' })}
-                                type="time"
-                                className="border-border/40"
-                              />
-                              {errors.time && (
-                                <p className="text-red-500 text-sm mt-1">{errors.time.message}</p>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Submit Button */}
-                        <div className="pt-6 border-t border-border/40">
-                          <Button
-                            type="submit"
-                            disabled={isSubmittingBooking}
-                            className="w-full bg-primary text-white hover:bg-primary/90 h-12 text-base font-semibold"
-                          >
-                            {isSubmittingBooking ? 'Booking...' : 'Confirm Booking'}
-                          </Button>
-                          <p className="text-sm text-foreground/60 mt-4 text-center">
-                            We'll send you a confirmation email with all the details.
-                          </p>
-                        </div>
-                      </form>
-                    )}
-                  </CardContent>
-                </Card>
-              </AnimatedElement>
-            )}
           </div>
         </div>
       </section>
