@@ -1,19 +1,18 @@
 // TheDetailStandard-DFW - Updated Homepage
-npm run release
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { 
-  Phone, 
-  Star, 
-  Check, 
-  Sparkles, 
-  Clock, 
-  Shield, 
-  MapPin, 
-  Gift, 
-  ChevronRight, 
-  Car, 
-  Calendar, 
+import {
+  Phone,
+  Star,
+  Check,
+  Sparkles,
+  Clock,
+  Shield,
+  MapPin,
+  Gift,
+  ChevronRight,
+  Car,
+  Calendar,
   CreditCard,
   Menu,
   X
@@ -414,7 +413,7 @@ export default function HomePage() {
                 <div className="service-card" style={{ position: 'relative' }}>
                   {/* Top gold bar */}
                   <div style={{ height: '3px', background: 'linear-gradient(90deg, #9A7A2E, #E8C96A, #9A7A2E)' }} />
-                  
+
                   <div style={{ padding: '32px' }}>
                     {/* Badge */}
                     <span style={{ display: 'inline-block', padding: '4px 14px', borderRadius: '99px', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontSize: '11px', fontFamily: "'Lato', sans-serif", fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '20px' }}>
