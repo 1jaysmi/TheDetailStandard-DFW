@@ -1,20 +1,18 @@
-// The Detail Standard-DFW
-npm install
-npm run dev
+// TheDetailStandard-DFW - Updated Homepage
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  Phone,
-  Star,
-  Check,
-  Sparkles,
-  Clock,
-  Shield,
-  MapPin,
-  Gift,
-  ChevronRight,
-  Car,
-  Calendar,
+import { 
+  Phone, 
+  Star, 
+  Check, 
+  Sparkles, 
+  Clock, 
+  Shield, 
+  MapPin, 
+  Gift, 
+  ChevronRight, 
+  Car, 
+  Calendar, 
   CreditCard,
   Menu,
   X
@@ -24,541 +22,625 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Image } from '@/components/ui/image';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
-import type { DetailingServices, Testimonials } from '@/entities';
 
-// --- Animation Components ---
+// ─── Gold/Black Color Tokens (override via CSS variables in your Wix theme) ───
+// --gold:       #C9A84C
+// --gold-light: #E8C96A
+// --gold-dark:  #9A7A2E
+// --black:      #0A0A0A
+// --charcoal:   #111111
+// --off-white:  #F5F0E8
 
-const AnimatedElement: React.FC<{
+// ─── Hardcoded Pricing Data ───────────────────────────────────────────────────
+const SERVICES = {
+  sedan: [
+    {
+      id: 's1',
+      name: 'Express Interior',
+      price: 99,
+      duration: '1–1.5 hrs',
+      badge: 'Most Popular',
+      description: 'Quick refresh for sedans & coupes. Perfect for regular maintenance.',
+      features: [
+        'Vacuum all surfaces',
+        'Wipe down dashboard & console',
+        'Window cleaning (interior)',
+        'Door panel wipe-down',
+        'Cup holder & crevice clean',
+        'Air freshener',
+      ],
+    },
+    {
+      id: 's2',
+      name: 'Full Interior Detail',
+      price: 179,
+      duration: '2.5–3.5 hrs',
+      badge: 'Best Value',
+      description: 'Deep clean for sedans & coupes. Restores like-new interior condition.',
+      features: [
+        'Everything in Express',
+        'Steam clean vents & crevices',
+        'Leather/vinyl conditioning',
+        'Carpet shampoo & extraction',
+        'Headliner spot clean',
+        'Pet hair removal',
+      ],
+    },
+    {
+      id: 's3',
+      name: 'Full Detail Package',
+      price: 279,
+      duration: '4–6 hrs',
+      badge: 'Premium',
+      description: 'Complete interior + exterior transformation for sedans & coupes.',
+      features: [
+        'Everything in Full Interior',
+        'Hand wash & dry',
+        'Clay bar decontamination',
+        'Tire dressing & rim clean',
+        'Exterior wipe-down',
+        'Paint sealant application',
+      ],
+    },
+  ],
+  truck: [
+    {
+      id: 't1',
+      name: 'Express Interior',
+      price: 129,
+      duration: '1.5–2 hrs',
+      badge: 'Most Popular',
+      description: 'Quick refresh for trucks & SUVs. Perfect for regular maintenance.',
+      features: [
+        'Vacuum all surfaces',
+        'Wipe down dashboard & console',
+        'Window cleaning (interior)',
+        'Door panel wipe-down',
+        'Cup holder & crevice clean',
+        'Air freshener',
+      ],
+    },
+    {
+      id: 't2',
+      name: 'Full Interior Detail',
+      price: 219,
+      duration: '3–4.5 hrs',
+      badge: 'Best Value',
+      description: 'Deep clean for trucks & SUVs. Restores like-new interior condition.',
+      features: [
+        'Everything in Express',
+        'Steam clean vents & crevices',
+        'Leather/vinyl conditioning',
+        'Carpet shampoo & extraction',
+        'Headliner spot clean',
+        'Pet hair removal',
+      ],
+    },
+    {
+      id: 't3',
+      name: 'Full Detail Package',
+      price: 329,
+      duration: '5–7 hrs',
+      badge: 'Premium',
+      description: 'Complete interior + exterior transformation for trucks & SUVs.',
+      features: [
+        'Everything in Full Interior',
+        'Hand wash & dry',
+        'Clay bar decontamination',
+        'Tire dressing & rim clean',
+        'Exterior wipe-down',
+        'Paint sealant application',
+      ],
+    },
+  ],
+};
+
+const TESTIMONIALS = [
+  {
+    id: 1,
+    name: 'Marcus T.',
+    location: 'Plano, TX',
+    rating: 5,
+    text: 'TheDetailStandard came to my office and had my truck looking brand new in under 4 hours. Absolutely worth every penny.',
+  },
+  {
+    id: 2,
+    name: 'Destiny R.',
+    location: 'Frisco, TX',
+    rating: 5,
+    text: 'I was skeptical about a mobile detail service but wow — they exceeded every expectation. My car smells and looks incredible.',
+  },
+  {
+    id: 3,
+    name: 'Jerome W.',
+    location: 'Dallas, TX',
+    rating: 5,
+    text: 'Professional, on time, and detailed to perfection. This is the only detailing company I'll ever use in DFW.',
+  },
+];
+
+// ─── Animation Helper ─────────────────────────────────────────────────────────
+const AnimatedElement = ({ children, className = '', delay = 0, direction = 'up' }: {
   children: React.ReactNode;
   className?: string;
   delay?: number;
   direction?: 'up' | 'left' | 'right' | 'fade';
-}> = ({ children, className = "", delay = 0, direction = 'up' }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+}) => {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) {
-        setTimeout(() => setIsVisible(true), delay);
-        observer.unobserve(el);
-      }
-    }, { threshold: 0.1, rootMargin: '50px' });
-
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setTimeout(() => setVisible(true), delay); observer.unobserve(el); } },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
     observer.observe(el);
     return () => observer.disconnect();
   }, [delay]);
 
-  const getTransform = () => {
-    if (!isVisible) {
-      switch (direction) {
-        case 'up': return 'translate-y-8';
-        case 'left': return '-translate-x-8';
-        case 'right': return 'translate-x-8';
-        default: return '';
-      }
-    }
-    return 'translate-y-0 translate-x-0';
-  };
+  const transform = !visible
+    ? direction === 'up' ? 'translateY(32px)' : direction === 'left' ? 'translateX(-32px)' : direction === 'right' ? 'translateX(32px)' : 'none'
+    : 'none';
 
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${isVisible ? 'opacity-100' : 'opacity-0'} ${getTransform()} ${className}`}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform,
+        transition: 'opacity 0.7s ease-out, transform 0.7s ease-out',
+      }}
     >
       {children}
     </div>
   );
 };
 
-// --- Main Component ---
-
+// ─── Main Component ───────────────────────────────────────────────────────────
 export default function HomePage() {
   const navigate = useNavigate();
-  const [services, setServices] = useState<DetailingServices[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonials[]>([]);
-  const [isLoadingServices, setIsLoadingServices] = useState(true);
-  const [isLoadingTestimonials, setIsLoadingTestimonials] = useState(true);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState('sedan');
 
-  // Fetch Data
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Fetch Services
-        const servicesResult = await BaseCrudService.getAll<DetailingServices>('detailingservices');
-        setServices(servicesResult.items);
-      } catch (error) {
-        console.error('Error loading services:', error);
-      } finally {
-        setIsLoadingServices(false);
-      }
-
-      try {
-        // Fetch Testimonials
-        const testimonialsResult = await BaseCrudService.getAll<Testimonials>('testimonials');
-        setTestimonials(testimonialsResult.items.filter(t => t.isApproved));
-      } catch (error) {
-        console.error('Error loading testimonials:', error);
-      } finally {
-        setIsLoadingTestimonials(false);
-      }
-    };
-
-    loadData();
-  }, []);
-
-  // Filter services based on active tab
-  const filteredServices = services.filter(service => {
-    if (activeTab === "sedan") return service.itemDescription?.toLowerCase().includes("sedan") || service.itemDescription?.toLowerCase().includes("coupe");
-    if (activeTab === "truck") return service.itemDescription?.toLowerCase().includes("truck") || service.itemDescription?.toLowerCase().includes("suv");
-    return true;
-  });
-
-  // Helper to parse features list
-  const getFeaturesList = (text?: string) => {
-    if (!text) return [];
-    return text.split(/[\n,]/).map(item => item.trim()).filter(item => item.length > 0);
-  };
+  const services = SERVICES[activeTab];
 
   return (
-    <div className="min-h-screen bg-background font-paragraph overflow-x-hidden">
+    <div style={{ minHeight: '100vh', background: '#0A0A0A', fontFamily: "'Playfair Display', Georgia, serif", overflowX: 'hidden' }}>
+      {/* Google Fonts */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Lato:wght@300;400;700&display=swap');
+
+        :root {
+          --gold: #C9A84C;
+          --gold-light: #E8C96A;
+          --gold-dark: #9A7A2E;
+          --black: #0A0A0A;
+          --charcoal: #111111;
+          --off-white: #F5F0E8;
+          --gray: #888;
+        }
+
+        * { box-sizing: border-box; }
+
+        .btn-gold {
+          background: linear-gradient(135deg, #C9A84C, #E8C96A, #9A7A2E);
+          color: #0A0A0A;
+          border: none;
+          font-family: 'Lato', sans-serif;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .btn-gold:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
+
+        .btn-outline-gold {
+          background: transparent;
+          color: #C9A84C;
+          border: 1.5px solid #C9A84C;
+          font-family: 'Lato', sans-serif;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .btn-outline-gold:hover { background: rgba(201,168,76,0.1); transform: translateY(-2px); }
+
+        .gold-divider {
+          width: 60px;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #C9A84C, transparent);
+          margin: 0 auto 24px;
+        }
+
+        .service-card {
+          background: #111111;
+          border: 1px solid rgba(201,168,76,0.2);
+          border-radius: 16px;
+          overflow: hidden;
+          transition: all 0.35s ease;
+        }
+        .service-card:hover {
+          border-color: rgba(201,168,76,0.6);
+          transform: translateY(-6px);
+          box-shadow: 0 20px 60px rgba(201,168,76,0.15);
+        }
+
+        .tab-btn {
+          padding: 10px 28px;
+          border-radius: 99px;
+          border: none;
+          font-family: 'Lato', sans-serif;
+          font-weight: 700;
+          font-size: 14px;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: all 0.25s ease;
+        }
+        .tab-active { background: linear-gradient(135deg, #C9A84C, #E8C96A); color: #0A0A0A; }
+        .tab-inactive { background: transparent; color: #888; }
+        .tab-inactive:hover { color: #C9A84C; }
+
+        .testimonial-card {
+          background: #111;
+          border: 1px solid rgba(201,168,76,0.15);
+          border-radius: 16px;
+          padding: 36px;
+          transition: border-color 0.3s;
+        }
+        .testimonial-card:hover { border-color: rgba(201,168,76,0.4); }
+
+        @keyframes scrollBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+        .scroll-bounce { animation: scrollBounce 1.5s ease-in-out infinite; }
+
+        @keyframes ping { 0%{transform:scale(1);opacity:0.6} 100%{transform:scale(2.5);opacity:0} }
+        .map-ping { animation: ping 2s cubic-bezier(0,0,0.2,1) infinite; }
+      `}</style>
+
       <Header />
 
-      {/* --- HERO SECTION --- */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-black">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg"
-            alt="Luxury Car Detailing"
-            className="w-full h-full object-cover opacity-60"
-            width={1920}
-            height={1080}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/90" />
-          {/* Decorative glow */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-radial from-primary/20 to-transparent opacity-40 pointer-events-none" />
-        </div>
+      {/* ── HERO ── */}
+      <section style={{ position: 'relative', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0A0A0A', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, #0A0A0A 0%, #1a1208 50%, #0A0A0A 100%)' }} />
+        {/* Gold grain overlay */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('https://www.transparenttextures.com/patterns/asfalt-dark.png')", opacity: 0.3 }} />
+        {/* Gold radial glow */}
+        <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%,-50%)', width: '700px', height: '700px', background: 'radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        <div className="container relative z-10 px-4 py-20 text-center">
+        <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', padding: '80px 24px', maxWidth: '900px', margin: '0 auto' }}>
           <AnimatedElement delay={0}>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/20 border border-primary/30 backdrop-blur-sm mb-8">
-              <Sparkles className="w-4 h-4 text-primary-foreground" />
-              <span className="text-sm font-medium text-white tracking-wide uppercase">Convenient. Reliable. Transparent.</span>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 18px', borderRadius: '99px', border: '1px solid rgba(201,168,76,0.4)', background: 'rgba(201,168,76,0.08)', marginBottom: '32px' }}>
+              <Sparkles style={{ width: '14px', height: '14px', color: '#C9A84C' }} />
+              <span style={{ fontSize: '12px', fontFamily: "'Lato', sans-serif", fontWeight: 700, color: '#C9A84C', letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+                Convenient · Reliable · Transparent
+              </span>
             </div>
           </AnimatedElement>
 
           <AnimatedElement delay={100}>
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold text-white mb-6 leading-tight tracking-tight">
-              #1 Car Detailing Services <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-primary/50 to-white">
-                in Dallas, TX
-              </span>
+            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(42px, 7vw, 80px)', fontWeight: 900, color: '#F5F0E8', lineHeight: 1.1, marginBottom: '8px', letterSpacing: '-0.01em' }}>
+              TheDetailStandard
             </h1>
+            <h2 style={{ fontFamily: "'Lato', sans-serif", fontSize: 'clamp(14px, 2.5vw, 22px)', fontWeight: 300, color: '#C9A84C', letterSpacing: '0.35em', textTransform: 'uppercase', marginBottom: '24px' }}>
+              DFW's Premier Mobile Detailing
+            </h2>
           </AnimatedElement>
 
+          <div className="gold-divider" />
+
           <AnimatedElement delay={200}>
-            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-              Never lose that car shine - K&J Cleaner brings you the best car detailing Dallas can offer.
-              Every service at your doorstep.
+            <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '18px', color: 'rgba(245,240,232,0.7)', marginBottom: '48px', lineHeight: 1.8, maxWidth: '580px', margin: '0 auto 48px' }}>
+              We bring the detail shop to your door — delivering showroom-quality results at your home or office, anywhere in Dallas-Fort Worth.
             </p>
           </AnimatedElement>
 
           <AnimatedElement delay={300}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Button
-                size="lg"
-                className="h-14 px-8 text-lg bg-primary hover:bg-primary/90 text-white rounded-full shadow-[0_0_20px_rgba(22,123,246,0.4)] hover:shadow-[0_0_30px_rgba(22,123,246,0.6)] transition-all duration-300 hover:scale-105"
-                onClick={() => navigate('/services')}
-              >
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button className="btn-gold" style={{ padding: '16px 40px', borderRadius: '99px', fontSize: '14px' }} onClick={() => navigate('/services')}>
                 Book Now
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-14 px-8 text-lg border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white hover:border-white/40 rounded-full backdrop-blur-sm transition-all duration-300"
-                onClick={() => window.location.href = 'tel:2143670617'}
-              >
-                <Phone className="w-5 h-5 mr-2" />
+              </button>
+              <button className="btn-outline-gold" style={{ padding: '16px 40px', borderRadius: '99px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.location.href = 'tel:2143670617'}>
+                <Phone style={{ width: '16px', height: '16px' }} />
                 (214) 367-0617
-              </Button>
+              </button>
             </div>
           </AnimatedElement>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce text-white/50">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center p-1">
-            <div className="w-1 h-2 bg-white/50 rounded-full animate-scroll" />
+        <div className="scroll-bounce" style={{ position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)' }}>
+          <div style={{ width: '24px', height: '40px', border: '1.5px solid rgba(201,168,76,0.4)', borderRadius: '12px', display: 'flex', justifyContent: 'center', padding: '4px' }}>
+            <div style={{ width: '4px', height: '8px', background: '#C9A84C', borderRadius: '2px' }} />
           </div>
         </div>
       </section>
 
-      {/* --- BLUE BANNER (FEATURES) --- */}
-      <section className="bg-primary py-12 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
-            <AnimatedElement delay={0} direction="left" className="flex items-center justify-center md:justify-start gap-4">
-              <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm">
-                <Sparkles className="w-8 h-8" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">Unlimited requests</h3>
-                <p className="text-white/80 text-sm">Book as often as you need</p>
-              </div>
-            </AnimatedElement>
-
-            <AnimatedElement delay={100} direction="up" className="flex items-center justify-center md:justify-start gap-4">
-              <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm">
-                <Shield className="w-8 h-8" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">Pause or cancel anytime</h3>
-                <p className="text-white/80 text-sm">Flexible membership options</p>
-              </div>
-            </AnimatedElement>
-
-            <AnimatedElement delay={200} direction="right" className="flex items-center justify-center md:justify-start gap-4">
-              <div className="p-3 bg-white/10 rounded-xl backdrop-blur-sm">
-                <Clock className="w-8 h-8" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg">Fast turnaround</h3>
-                <p className="text-white/80 text-sm">Same day service available</p>
-              </div>
-            </AnimatedElement>
-          </div>
-        </div>
-      </section>
-
-      {/* --- PRICING / SERVICES SECTION --- */}
-      <section className="py-24 bg-background relative">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <AnimatedElement>
-              <h2 className="text-3xl md:text-5xl font-heading font-bold text-foreground mb-4">
-                Transformations That Are Minutes Away
-              </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Get prices that work for you the best. Choose from our premium packages.
-              </p>
-            </AnimatedElement>
-
-            <AnimatedElement delay={100}>
-              <div className="mt-8 flex justify-center">
-                <div className="bg-secondary/50 p-1 rounded-full inline-flex">
-                  {[
-                    { id: 'sedan', label: 'Sedan/Coupe' },
-                    { id: 'truck', label: 'Truck/SUV' }
-                  ].map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                        activeTab === tab.id
-                          ? 'bg-white text-primary shadow-md'
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {tab.label}
-                    </button>
-                  ))}
+      {/* ── GOLD BANNER ── */}
+      <section style={{ background: 'linear-gradient(135deg, #9A7A2E, #C9A84C, #E8C96A, #C9A84C, #9A7A2E)', padding: '40px 24px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('https://www.transparenttextures.com/patterns/cubes.png')", opacity: 0.08 }} />
+        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '32px', position: 'relative', zIndex: 1 }}>
+          {[
+            { icon: <Sparkles />, title: 'Unlimited Bookings', sub: 'Book as often as you need' },
+            { icon: <Shield />, title: 'Pause or Cancel Anytime', sub: 'Flexible, no-hassle membership' },
+            { icon: <Clock />, title: 'Fast Turnaround', sub: 'Same-day service available' },
+          ].map((item, i) => (
+            <AnimatedElement key={i} delay={i * 80} direction={i === 0 ? 'left' : i === 2 ? 'right' : 'up'}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', justifyContent: 'center' }}>
+                <div style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '12px', color: '#0A0A0A' }}>
+                  {React.cloneElement(item.icon, { style: { width: '24px', height: '24px' } })}
+                </div>
+                <div>
+                  <p style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '16px', color: '#0A0A0A', margin: 0 }}>{item.title}</p>
+                  <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '13px', color: 'rgba(0,0,0,0.6)', margin: 0 }}>{item.sub}</p>
                 </div>
               </div>
             </AnimatedElement>
-          </div>
+          ))}
+        </div>
+      </section>
 
-          {isLoadingServices ? (
-            <div className="flex justify-center py-20">
-              <LoadingSpinner className="w-12 h-12 text-primary" />
+      {/* ── SERVICES / PRICING ── */}
+      <section style={{ padding: '100px 24px', background: '#0A0A0A' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <AnimatedElement>
+            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+              <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '16px' }}>Pricing</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(32px, 5vw, 52px)', fontWeight: 900, color: '#F5F0E8', margin: '0 0 16px' }}>
+                Packages Built for Every Vehicle
+              </h2>
+              <div className="gold-divider" />
+              <p style={{ fontFamily: "'Lato', sans-serif", color: '#888', fontSize: '16px', maxWidth: '500px', margin: '0 auto 40px' }}>
+                Choose your vehicle type below. All services are mobile — we come to you.
+              </p>
+
+              {/* Tabs */}
+              <div style={{ display: 'inline-flex', background: 'rgba(255,255,255,0.05)', padding: '4px', borderRadius: '99px', border: '1px solid rgba(201,168,76,0.15)' }}>
+                <button className={`tab-btn ${activeTab === 'sedan' ? 'tab-active' : 'tab-inactive'}`} onClick={() => setActiveTab('sedan')}>Sedan / Coupe</button>
+                <button className={`tab-btn ${activeTab === 'truck' ? 'tab-active' : 'tab-inactive'}`} onClick={() => setActiveTab('truck')}>Truck / SUV</button>
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {filteredServices.map((service, index) => (
-                <AnimatedElement key={service._id} delay={index * 100}>
-                  <Card className="h-full flex flex-col border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-white rounded-3xl overflow-hidden group">
-                    <div className="h-2 bg-gradient-to-r from-primary to-accent" />
-                    <CardHeader className="pb-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
-                          {service.serviceDuration || 'Best Value'}
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-2xl font-bold text-foreground">{service.itemName}</CardTitle>
-                      <div className="mt-4 flex items-baseline">
-                        <span className="text-4xl font-bold text-primary">${service.itemPrice}</span>
-                        <span className="ml-2 text-muted-foreground text-sm">starting at</span>
-                      </div>
-                    </CardHeader>
+          </AnimatedElement>
 
-                    <CardContent className="flex-grow">
-                      <p className="text-muted-foreground mb-6 text-sm line-clamp-2">
-                        {service.itemDescription}
-                      </p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '28px' }}>
+            {services.map((svc, i) => (
+              <AnimatedElement key={svc.id} delay={i * 100}>
+                <div className="service-card" style={{ position: 'relative' }}>
+                  {/* Top gold bar */}
+                  <div style={{ height: '3px', background: 'linear-gradient(90deg, #9A7A2E, #E8C96A, #9A7A2E)' }} />
+                  
+                  <div style={{ padding: '32px' }}>
+                    {/* Badge */}
+                    <span style={{ display: 'inline-block', padding: '4px 14px', borderRadius: '99px', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)', color: '#C9A84C', fontSize: '11px', fontFamily: "'Lato', sans-serif", fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '20px' }}>
+                      {svc.badge}
+                    </span>
 
-                      <div className="space-y-3">
-                        {getFeaturesList(service.whatsIncluded).slice(0, 6).map((feature, i) => (
-                          <div key={i} className="flex items-start gap-3">
-                            <div className="mt-1 min-w-[18px] min-h-[18px] rounded-full bg-green-100 flex items-center justify-center">
-                              <Check className="w-3 h-3 text-green-600" />
-                            </div>
-                            <span className="text-sm text-gray-600">{feature}</span>
+                    <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '24px', fontWeight: 700, color: '#F5F0E8', margin: '0 0 6px' }}>
+                      {svc.name}
+                    </h3>
+                    <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '13px', color: '#888', margin: '0 0 20px' }}>{svc.description}</p>
+
+                    {/* Price */}
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px', marginBottom: '8px' }}>
+                      <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '48px', fontWeight: 900, color: '#C9A84C', lineHeight: 1 }}>${svc.price}</span>
+                      <span style={{ fontFamily: "'Lato', sans-serif", fontSize: '13px', color: '#888' }}>starting at</span>
+                    </div>
+                    <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '12px', color: '#666', marginBottom: '28px' }}>
+                      <Clock style={{ width: '12px', height: '12px', display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
+                      {svc.duration}
+                    </p>
+
+                    {/* Divider */}
+                    <div style={{ height: '1px', background: 'rgba(201,168,76,0.1)', marginBottom: '24px' }} />
+
+                    {/* Features */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '32px' }}>
+                      {svc.features.map((f, fi) => (
+                        <div key={fi} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                          <div style={{ minWidth: '18px', minHeight: '18px', borderRadius: '50%', background: 'rgba(201,168,76,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '1px' }}>
+                            <Check style={{ width: '10px', height: '10px', color: '#C9A84C' }} />
                           </div>
-                        ))}
-                      </div>
-                    </CardContent>
-
-                    <CardFooter className="pt-4 pb-8">
-                      <Button
-                        className="w-full bg-foreground text-white hover:bg-foreground/90 h-12 rounded-xl text-base font-semibold shadow-lg shadow-foreground/20"
-                        onClick={() => navigate('/services')}
-                      >
-                        Book Appointment
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </AnimatedElement>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* --- HOW IT WORKS SECTION --- */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <AnimatedElement className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-4">
-              Book an Appointment With Your Finger Tips
-            </h2>
-            <p className="text-muted-foreground">Simple, fast, and secure booking process.</p>
-          </AnimatedElement>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
-            <AnimatedElement delay={0} className="text-center group">
-              <div className="w-20 h-20 mx-auto bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
-                <Car className="w-10 h-10 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">1. We Come To You</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Select your location and we will come to your home or office fully equipped.
-              </p>
-            </AnimatedElement>
-
-            <AnimatedElement delay={100} className="text-center group">
-              <div className="w-20 h-20 mx-auto bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
-                <Calendar className="w-10 h-10 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">2. Detail Now</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Choose a time that works for you. We are available 7 days a week.
-              </p>
-            </AnimatedElement>
-
-            <AnimatedElement delay={200} className="text-center group">
-              <div className="w-20 h-20 mx-auto bg-primary/5 rounded-full flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
-                <CreditCard className="w-10 h-10 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">3. Pay Later</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Secure payment after the service is completed to your satisfaction.
-              </p>
-            </AnimatedElement>
-          </div>
-        </div>
-      </section>
-
-      {/* --- MAP & LOCATION SECTION --- */}
-      <section className="py-0 bg-black text-white overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[600px]">
-          {/* Left: Image/Content */}
-          <div className="relative p-12 flex flex-col justify-center items-start z-10">
-            <div className="absolute inset-0 z-0">
-              <Image
-                src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg"
-                alt="Garage"
-                className="w-full h-full object-cover opacity-40"
-                width={800}
-                height={800}
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent" />
-            </div>
-
-            <div className="relative z-10 max-w-lg">
-              <Badge className="mb-6 bg-primary text-white border-none px-4 py-1">Service Area</Badge>
-              <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">
-                We are serving all of Dallas
-              </h2>
-              <p className="text-gray-300 text-lg mb-8 leading-relaxed">
-                From Downtown to the suburbs, our mobile units are ready to deploy.
-                We cover a 50-mile radius around the Dallas metropolitan area.
-              </p>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-bold">Dallas, TX</p>
-                    <p className="text-sm text-gray-400">Headquarters</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-bold">Mon - Sun: 7am - 7pm</p>
-                    <p className="text-sm text-gray-400">Operating Hours</p>
-                  </div>
-                </div>
-              </div>
-              <Button className="mt-10 bg-white text-black hover:bg-gray-200 rounded-full px-8" onClick={() => navigate('/contact')}>
-                Check Your Area
-              </Button>
-            </div>
-          </div>
-
-          {/* Right: Map Image */}
-          <div className="relative h-[400px] lg:h-auto bg-gray-900">
-            <Image
-              src="https://static.wixstatic.com/media/11062b_11062b11062b11062b11062b11062b11~mv2.jpg"
-              alt="Map of Dallas"
-              className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-              width={800}
-              height={800}
-            />
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-32 h-32 bg-primary/30 rounded-full animate-ping absolute" />
-              <div className="w-8 h-8 bg-primary rounded-full border-4 border-white shadow-xl relative z-10" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- GIFT CARD SECTION --- */}
-      <section className="py-24 bg-gradient-to-b from-background to-secondary/20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-border/50">
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="p-12 flex flex-col justify-center">
-                <div className="inline-flex items-center gap-2 text-primary font-bold mb-4">
-                  <Gift className="w-5 h-5" />
-                  <span>SPECIAL OFFER</span>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-6">
-                  Give the Gift of Clean
-                </h2>
-                <p className="text-muted-foreground mb-8">
-                  The perfect gift for car lovers. Purchase a digital gift card instantly and send it to friends or family.
-                </p>
-                <Button
-                  className="w-fit bg-foreground text-white hover:bg-foreground/90 rounded-full px-8 h-12 shadow-lg"
-                  onClick={() => navigate('/services')}
-                >
-                  Purchase Gift Card
-                </Button>
-              </div>
-              <div className="bg-gray-100 relative min-h-[300px] flex items-center justify-center p-8">
-                <div className="relative w-48 md:w-56 aspect-[9/16] bg-black rounded-[2rem] border-4 border-gray-800 shadow-2xl transform rotate-[-5deg] hover:rotate-0 transition-transform duration-500">
-                  <div className="absolute inset-0 bg-gray-900 rounded-[1.8rem] overflow-hidden flex flex-col items-center justify-center text-white p-4 text-center">
-                    <Sparkles className="w-8 h-8 text-yellow-400 mb-2" />
-                    <h3 className="font-bold text-xl mb-1">BLACK</h3>
-                    <p className="text-xs text-gray-400">PREMIUM CARD</p>
-                    <div className="mt-8 text-2xl font-bold">$100</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* --- TESTIMONIALS SECTION --- */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-4">
-          <AnimatedElement className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-4">
-              What Our Customers Say
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Join hundreds of satisfied customers who trust K&J Cleaner Car.
-            </p>
-          </AnimatedElement>
-
-          {isLoadingTestimonials ? (
-            <div className="flex justify-center">
-              <LoadingSpinner />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {testimonials.slice(0, 3).map((testimonial, index) => (
-                <AnimatedElement key={testimonial._id} delay={index * 100}>
-                  <Card className="h-full p-8 bg-secondary/10 border-none rounded-2xl hover:bg-secondary/20 transition-colors duration-300">
-                    <div className="flex gap-1 mb-6">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-5 h-5 ${i < (testimonial.rating || 5) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                        />
+                          <span style={{ fontFamily: "'Lato', sans-serif", fontSize: '14px', color: 'rgba(245,240,232,0.75)', lineHeight: 1.4 }}>{f}</span>
+                        </div>
                       ))}
                     </div>
-                    <p className="text-foreground/80 text-lg italic mb-8 leading-relaxed">
-                      "{testimonial.reviewText}"
-                    </p>
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xl">
-                        {testimonial.customerName?.charAt(0) || 'C'}
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-foreground">{testimonial.customerName}</h4>
-                        <p className="text-sm text-muted-foreground">{testimonial.customerLocation || 'Dallas, TX'}</p>
-                      </div>
-                    </div>
-                  </Card>
-                </AnimatedElement>
-              ))}
-            </div>
-          )}
+
+                    <button className="btn-gold" style={{ width: '100%', padding: '14px', borderRadius: '12px', fontSize: '13px' }} onClick={() => navigate('/services')}>
+                      Book Appointment
+                    </button>
+                  </div>
+                </div>
+              </AnimatedElement>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* --- FINAL CTA --- */}
-      <section className="py-20 bg-primary text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
-        <div className="container mx-auto px-4 relative z-10 text-center">
+      {/* ── HOW IT WORKS ── */}
+      <section style={{ padding: '100px 24px', background: '#111' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <AnimatedElement>
-            <h2 className="text-3xl md:text-5xl font-heading font-bold mb-6">
-              Ready to Transform Your Car?
+            <div style={{ textAlign: 'center', marginBottom: '72px' }}>
+              <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '16px' }}>Process</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#F5F0E8', margin: '0 0 16px' }}>
+                Book With Your Fingertips
+              </h2>
+              <div className="gold-divider" />
+            </div>
+          </AnimatedElement>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '48px' }}>
+            {[
+              { icon: <Car />, step: '01', title: 'We Come to You', desc: 'Select your location — home, office, or anywhere in DFW. We arrive fully equipped.' },
+              { icon: <Calendar />, step: '02', title: 'Choose Your Time', desc: 'Available 7 days a week. Pick a time that works for your schedule.' },
+              { icon: <CreditCard />, step: '03', title: 'Pay After Service', desc: 'Secure payment collected only after you're fully satisfied with the results.' },
+            ].map((item, i) => (
+              <AnimatedElement key={i} delay={i * 120}>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ position: 'relative', display: 'inline-block', marginBottom: '24px' }}>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '50%', border: '1px solid rgba(201,168,76,0.3)', background: 'rgba(201,168,76,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+                      {React.cloneElement(item.icon, { style: { width: '32px', height: '32px', color: '#C9A84C' } })}
+                    </div>
+                    <span style={{ position: 'absolute', top: '-8px', right: '-8px', fontFamily: "'Playfair Display', serif", fontSize: '12px', fontWeight: 700, color: '#C9A84C', background: '#111', padding: '2px 6px', border: '1px solid rgba(201,168,76,0.3)', borderRadius: '4px' }}>{item.step}</span>
+                  </div>
+                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '20px', fontWeight: 700, color: '#F5F0E8', marginBottom: '12px' }}>{item.title}</h3>
+                  <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '14px', color: '#888', lineHeight: 1.7, maxWidth: '260px', margin: '0 auto' }}>{item.desc}</p>
+                </div>
+              </AnimatedElement>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── SERVICE AREA ── */}
+      <section style={{ background: '#0A0A0A', overflow: 'hidden' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', minHeight: '560px' }}>
+          <div style={{ padding: '80px 48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <span style={{ fontFamily: "'Lato', sans-serif", fontSize: '11px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '16px', display: 'block' }}>Service Area</span>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#F5F0E8', marginBottom: '24px', lineHeight: 1.2 }}>
+              Serving All of Dallas-Fort Worth
             </h2>
-            <p className="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-              Book your appointment today and experience the best car detailing Dallas has to offer.
+            <div style={{ width: '50px', height: '2px', background: 'linear-gradient(90deg, #C9A84C, transparent)', marginBottom: '24px' }} />
+            <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '16px', color: '#888', lineHeight: 1.8, marginBottom: '40px' }}>
+              Our mobile units cover a 50-mile radius around the DFW metroplex — from Downtown Dallas to the suburbs.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                className="bg-white text-primary hover:bg-gray-100 rounded-full px-10 h-14 text-lg font-bold shadow-xl"
-                onClick={() => navigate('/services')}
-              >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '40px' }}>
+              {[
+                { icon: <MapPin />, title: 'Dallas, TX', sub: 'Headquarters' },
+                { icon: <Clock />, title: 'Mon – Sun: 7am – 7pm', sub: 'Operating Hours' },
+              ].map((item, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(201,168,76,0.1)', border: '1px solid rgba(201,168,76,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {React.cloneElement(item.icon, { style: { width: '16px', height: '16px', color: '#C9A84C' } })}
+                  </div>
+                  <div>
+                    <p style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700, color: '#F5F0E8', margin: 0, fontSize: '15px' }}>{item.title}</p>
+                    <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '12px', color: '#666', margin: 0 }}>{item.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button className="btn-gold" style={{ padding: '14px 36px', borderRadius: '99px', fontSize: '13px', width: 'fit-content' }} onClick={() => navigate('/contact')}>
+              Check Your Area
+            </button>
+          </div>
+
+          {/* Map side */}
+          <div style={{ background: '#111', position: 'relative', minHeight: '400px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="map-ping" style={{ position: 'absolute', width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(201,168,76,0.25)' }} />
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#C9A84C', border: '3px solid #F5F0E8', boxShadow: '0 0 20px rgba(201,168,76,0.5)' }} />
+              </div>
+              <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '13px', color: '#666', marginTop: '24px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Dallas-Fort Worth, TX</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── GIFT CARD ── */}
+      <section style={{ padding: '100px 24px', background: '#111' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{ background: '#0A0A0A', border: '1px solid rgba(201,168,76,0.2)', borderRadius: '24px', overflow: 'hidden', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+            <div style={{ padding: '60px 48px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#C9A84C', marginBottom: '20px' }}>
+                <Gift style={{ width: '18px', height: '18px' }} />
+                <span style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700, fontSize: '12px', letterSpacing: '0.15em', textTransform: 'uppercase' }}>Special Offer</span>
+              </div>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: '36px', fontWeight: 900, color: '#F5F0E8', marginBottom: '16px', lineHeight: 1.2 }}>
+                Give the Gift of Clean
+              </h2>
+              <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '15px', color: '#888', lineHeight: 1.7, marginBottom: '36px' }}>
+                The perfect gift for car lovers in DFW. Purchase a digital gift card instantly and send it to anyone.
+              </p>
+              <button className="btn-gold" style={{ padding: '14px 36px', borderRadius: '99px', fontSize: '13px' }} onClick={() => navigate('/services')}>
+                Purchase Gift Card
+              </button>
+            </div>
+            <div style={{ background: 'rgba(201,168,76,0.04)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 48px' }}>
+              <div style={{ width: '160px', aspectRatio: '9/16', background: 'linear-gradient(160deg, #1a1208, #0A0A0A)', borderRadius: '24px', border: '1px solid rgba(201,168,76,0.3)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px', transform: 'rotate(-5deg)', transition: 'transform 0.4s ease', boxShadow: '0 20px 60px rgba(0,0,0,0.5)' }}>
+                <Sparkles style={{ width: '28px', height: '28px', color: '#C9A84C' }} />
+                <p style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '16px', color: '#F5F0E8', margin: 0 }}>GOLD</p>
+                <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '10px', color: '#666', margin: 0, letterSpacing: '0.15em' }}>PREMIUM CARD</p>
+                <div style={{ marginTop: '24px', fontFamily: "'Playfair Display', serif", fontSize: '28px', fontWeight: 900, color: '#C9A84C' }}>$100</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── TESTIMONIALS ── */}
+      <section style={{ padding: '100px 24px', background: '#0A0A0A' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <AnimatedElement>
+            <div style={{ textAlign: 'center', marginBottom: '64px' }}>
+              <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '16px' }}>Reviews</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: '#F5F0E8', margin: '0 0 16px' }}>
+                What Our Customers Say
+              </h2>
+              <div className="gold-divider" />
+              <p style={{ fontFamily: "'Lato', sans-serif", color: '#888', fontSize: '16px' }}>
+                Join hundreds of satisfied customers across the DFW area.
+              </p>
+            </div>
+          </AnimatedElement>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+            {TESTIMONIALS.map((t, i) => (
+              <AnimatedElement key={t.id} delay={i * 100}>
+                <div className="testimonial-card">
+                  <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>
+                    {[...Array(5)].map((_, si) => (
+                      <Star key={si} style={{ width: '16px', height: '16px', fill: si < t.rating ? '#C9A84C' : 'transparent', color: si < t.rating ? '#C9A84C' : '#444' }} />
+                    ))}
+                  </div>
+                  <p style={{ fontFamily: "'Playfair Display', serif", fontSize: '16px', color: 'rgba(245,240,232,0.8)', fontStyle: 'italic', lineHeight: 1.8, marginBottom: '28px' }}>
+                    "{t.text}"
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: 'rgba(201,168,76,0.15)', border: '1px solid rgba(201,168,76,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '18px', color: '#C9A84C' }}>
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700, color: '#F5F0E8', margin: 0, fontSize: '15px' }}>{t.name}</p>
+                      <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '12px', color: '#666', margin: 0 }}>{t.location}</p>
+                    </div>
+                  </div>
+                </div>
+              </AnimatedElement>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA ── */}
+      <section style={{ padding: '100px 24px', background: 'linear-gradient(135deg, #0d0b05, #1a1208, #0d0b05)', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')", opacity: 0.15 }} />
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(201,168,76,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
+
+        <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          <AnimatedElement>
+            <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '12px', letterSpacing: '0.25em', textTransform: 'uppercase', color: '#C9A84C', marginBottom: '20px' }}>Get Started</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(32px, 5vw, 56px)', fontWeight: 900, color: '#F5F0E8', marginBottom: '20px', lineHeight: 1.1 }}>
+              Ready to Set the Standard?
+            </h2>
+            <div className="gold-divider" />
+            <p style={{ fontFamily: "'Lato', sans-serif", fontSize: '18px', color: 'rgba(245,240,232,0.6)', marginBottom: '48px', lineHeight: 1.7 }}>
+              Book your appointment today and experience the finest mobile detailing in Dallas-Fort Worth.
+            </p>
+            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button className="btn-gold" style={{ padding: '18px 48px', borderRadius: '99px', fontSize: '14px' }} onClick={() => navigate('/services')}>
                 Book Appointment
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white/10 rounded-full px-10 h-14 text-lg font-bold"
-                onClick={() => window.location.href = 'tel:2143670617'}
-              >
+              </button>
+              <button className="btn-outline-gold" style={{ padding: '18px 48px', borderRadius: '99px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.location.href = 'tel:2143670617'}>
+                <Phone style={{ width: '16px', height: '16px' }} />
                 Call Us Now
-              </Button>
+              </button>
             </div>
           </AnimatedElement>
         </div>
@@ -567,4 +649,7 @@ export default function HomePage() {
       <Footer />
     </div>
   );
+}
+
+
 }
