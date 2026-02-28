@@ -162,7 +162,12 @@ const TESTIMONIALS = [
 ];
 
 // ─── Animation Helper ─────────────────────────────────────────────────────────
-const AnimatedElement = ({ children, className = '', delay = 0, direction = 'up' }) => {
+const AnimatedElement = ({ children, className = '', delay = 0, direction = 'up' }: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+  direction?: 'up' | 'left' | 'right' | 'fade';
+}) => {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -645,3 +650,4 @@ export default function HomePage() {
     </div>
   );
 }
+
