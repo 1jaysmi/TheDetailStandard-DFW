@@ -141,10 +141,10 @@ export default function ServicesPage() {
                         )}
 
                         <Button className="w-full bg-primary text-white hover:bg-primary/90 hover:scale-105 transition-all">
-                          <a href="tel:2143670617" className="flex items-center justify-center gap-2 w-full">
+                          <Link to="/booking" className="flex items-center justify-center gap-2 w-full">
                             <Phone className="w-5 h-5" />
                             Book This Service
-                          </a>
+                          </Link>
                         </Button>
                       </CardContent>
                     </Card>

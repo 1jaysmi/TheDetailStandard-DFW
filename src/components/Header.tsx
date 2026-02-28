@@ -38,7 +38,7 @@ export default function Header() {
               <span className="font-semibold">(214) 367-0617</span>
             </a>
             <Button asChild className="bg-primary text-white hover:bg-primary/90">
-              <Link to="/services">Book Now</Link>
+              <Link to="/booking">Book Now</Link>
             </Button>
           </div>
 
@@ -89,7 +89,7 @@ export default function Header() {
                 <span>(214) 367-0617</span>
               </a>
               <Button asChild className="bg-primary text-white hover:bg-primary/90 w-full">
-                <Link to="/services" onClick={() => setMobileMenuOpen(false)}>Book Now</Link>
+                <Link to="/booking" onClick={() => setMobileMenuOpen(false)}>Book Now</Link>
               </Button>
             </nav>
           </div>
